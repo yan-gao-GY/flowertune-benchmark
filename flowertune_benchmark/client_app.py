@@ -47,7 +47,6 @@ class FlowerClient(NumPyClient):
         formatting_prompts_func,
         data_collator,
         num_rounds,
-        use_wandb,
     ):  # pylint: disable=too-many-arguments
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         self.train_cfg = train_cfg
@@ -57,7 +56,6 @@ class FlowerClient(NumPyClient):
         self.data_collator = data_collator
         self.num_rounds = num_rounds
         self.trainset = trainset
-        self.use_wandb = use_wandb
 
         # instantiate model
         self.model = get_model(model_cfg)
@@ -75,8 +73,6 @@ class FlowerClient(NumPyClient):
             self.train_cfg.learning_rate_max,
             self.train_cfg.learning_rate_min,
         )
-        if self.use_wandb:
-            wandb.log({"LR": new_lr}, step=current_round)
 
         self.training_argumnets.learning_rate = new_lr
         self.training_argumnets.output_dir = config["save_path"]
@@ -98,7 +94,7 @@ class FlowerClient(NumPyClient):
         return (
             get_parameters(self.model),
             len(self.trainset),
-            {"train_loss": results.training_loss},
+            {"train_loss": results.training_loss, "LR": new_lr},
         )
 
 
@@ -125,7 +121,6 @@ def client_fn(context: Context) -> FlowerClient:
         formatting_prompts_func,
         data_collator,
         num_rounds,
-        cfg.use_wandb,
     ).to_client()
 
 
