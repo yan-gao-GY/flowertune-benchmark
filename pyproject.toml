@@ -19,6 +19,7 @@ dependencies = [
     "sentencepiece==0.2.0",
     "omegaconf==2.3.0",
     "hf_transfer==0.1.8",
+    "wandb==0.19.9",
 ]
 
 [tool.hatch.build.targets.wheel]

@@ -13,6 +13,7 @@ from omegaconf import DictConfig
 
 from transformers import TrainingArguments
 from trl import SFTTrainer
+import wandb
 
 from .dataset import (
     get_tokenizer_and_data_collator_and_propt_formatting,
@@ -46,6 +47,7 @@ class FlowerClient(NumPyClient):
         formatting_prompts_func,
         data_collator,
         num_rounds,
+        use_wandb,
     ):  # pylint: disable=too-many-arguments
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         self.train_cfg = train_cfg
@@ -55,6 +57,7 @@ class FlowerClient(NumPyClient):
         self.data_collator = data_collator
         self.num_rounds = num_rounds
         self.trainset = trainset
+        self.use_wandb = use_wandb
 
         # instantiate model
         self.model = get_model(model_cfg)
@@ -65,12 +68,15 @@ class FlowerClient(NumPyClient):
         """Implement distributed fit function for a given client."""
         set_parameters(self.model, parameters)
 
+        current_round = int(config["current_round"])
         new_lr = cosine_annealing(
-            int(config["current_round"]),
+            current_round,
             self.num_rounds,
             self.train_cfg.learning_rate_max,
             self.train_cfg.learning_rate_min,
         )
+        if self.use_wandb:
+            wandb.log({"LR": new_lr}, step=current_round)
 
         self.training_argumnets.learning_rate = new_lr
         self.training_argumnets.output_dir = config["save_path"]
@@ -119,6 +125,7 @@ def client_fn(context: Context) -> FlowerClient:
         formatting_prompts_func,
         data_collator,
         num_rounds,
+        cfg.use_wandb,
     ).to_client()
 
 
