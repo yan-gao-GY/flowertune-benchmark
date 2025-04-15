@@ -55,7 +55,7 @@ def fit_weighted_average(metrics):
     # Multiply accuracy of each client by number of examples used
     losses = [num_examples * m["train_loss"] for num_examples, m in metrics]
     examples = [num_examples for num_examples, _ in metrics]
-    lr = metrics[1]["LR"][0]
+    lr = metrics[0][1]["LR"]
 
     # Aggregate and return custom metric (weighted average)
     return {"train_loss": sum(losses) / sum(examples), "LR": lr}
