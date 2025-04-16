@@ -82,8 +82,8 @@ class CommunicationTracker:
         )
 
         # Save info
-        with open(self.run_name, "a") as fw:
-            fw.write("Communication budget: used %.2f MB (+%.2f MB this round) / 200,000 MB"
+        with open(f"{self.run_name}.txt", "a") as fw:
+            fw.write("Communication budget: used %.2f MB (+%.2f MB this round) / 200,000 MB\n"
                      % (self.curr_comm_cost, comm_cost))
 
         if self.curr_comm_cost > 2e5:
