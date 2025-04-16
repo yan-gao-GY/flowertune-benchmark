@@ -18,9 +18,9 @@ class FlowerTuneLlm(FedAvg):
     costs associated with `fit` over FL rounds.
     """
 
-    def __init__(self, use_wandb, **kwargs):
+    def __init__(self, use_wandb, run_name, **kwargs):
         super().__init__(**kwargs)
-        self.comm_tracker = CommunicationTracker()
+        self.comm_tracker = CommunicationTracker(run_name)
         self.use_wandb = use_wandb
 
     def configure_fit(
@@ -59,8 +59,9 @@ class FlowerTuneLlm(FedAvg):
 class CommunicationTracker:
     """Communication costs tracker over FL rounds."""
 
-    def __init__(self):
+    def __init__(self, run_name):
         self.curr_comm_cost = 0.0
+        self.run_name = run_name
 
     @staticmethod
     def _compute_bytes(parameters):
@@ -79,6 +80,11 @@ class CommunicationTracker:
             self.curr_comm_cost,
             comm_cost,
         )
+
+        # Save info
+        with open(self.run_name, "a") as fw:
+            fw.write("Communication budget: used %.2f MB (+%.2f MB this round) / 200,000 MB"
+                     % (self.curr_comm_cost, comm_cost))
 
         if self.curr_comm_cost > 2e5:
             log(

@@ -85,6 +85,7 @@ def server_fn(context: Context):
     # Define strategy
     strategy = FlowerTuneLlm(
         use_wandb=cfg.use_wandb,
+        run_name=cfg.run_name,
         fraction_fit=cfg.strategy.fraction_fit,
         fraction_evaluate=cfg.strategy.fraction_evaluate,
         on_fit_config_fn=get_on_fit_config(save_path),
