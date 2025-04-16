@@ -13,7 +13,6 @@ from omegaconf import DictConfig
 
 from transformers import TrainingArguments
 from trl import SFTTrainer
-import wandb
 
 from .dataset import (
     get_tokenizer_and_data_collator_and_propt_formatting,
