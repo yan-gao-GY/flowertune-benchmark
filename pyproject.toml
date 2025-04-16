@@ -36,40 +36,37 @@ clientapp = "flowertune_benchmark.client_app:app"
 model.name = "microsoft/Phi-4-mini-instruct"
 model.quantization = 4
 model.gradient-checkpointing = true
-model.lora.peft-lora-r = 16
+model.lora.peft-lora-r = 32
 model.lora.peft-lora-alpha = 64
 model.lora.peft-use-dora = true
 train.save-every-round = 5
 train.learning-rate-max = 5e-5
-train.learning-rate-min = 5e-6
+train.learning-rate-min = 1e-6
 train.seq-length = 512
 train.training-arguments.output-dir = ""
 train.training-arguments.learning-rate = ""
 train.training-arguments.per-device-train-batch-size = 16
 train.training-arguments.gradient-accumulation-steps = 1
 train.training-arguments.logging-steps = 1
-train.training-arguments.num-train-epochs = 3
 train.training-arguments.max-steps = 10
 train.training-arguments.save-steps = 1000
 train.training-arguments.save-total-limit = 10
 train.training-arguments.max-grad-norm = 1.0
 train.training-arguments.gradient-checkpointing = true
-train.training-arguments.bf16 = true
-train.training-arguments.tf32 = true
 train.training-arguments.lr-scheduler-type = "constant"
 strategy.fraction-fit = 0.2
 strategy.fraction-evaluate = 0.0
-num-server-rounds = 10
+num-server-rounds = 15
 use-wandb = true
 run-name = "default"
 
 [tool.flwr.app.config.static]
-dataset.name = "flwrlabs/code-alpaca-20k"
+dataset.name = "flwrlabs/alpaca-gpt4"
 
 [tool.flwr.federations]
 default = "local-simulation"
 
 [tool.flwr.federations.local-simulation]
-options.num-supernodes = 10
+options.num-supernodes = 20
 options.backend.client-resources.num-cpus = 4
 options.backend.client-resources.num-gpus = 1.0
