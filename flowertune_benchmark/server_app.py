@@ -1,7 +1,6 @@
 """flowertune-benchmark: A Flower / FlowerTune app."""
 
 import os
-from datetime import datetime
 
 from flwr.common import Context, ndarrays_to_parameters
 from flwr.common.config import unflatten_dict
@@ -63,15 +62,14 @@ def fit_weighted_average(metrics):
 
 def server_fn(context: Context):
     """Construct components that set the ServerApp behaviour."""
-    # Create output directory given current timestamp
-    current_time = datetime.now()
-    folder_name = current_time.strftime("%Y-%m-%d_%H-%M-%S")
-    save_path = os.path.join(os.getcwd(), f"results/{folder_name}")
-    os.makedirs(save_path, exist_ok=True)
-
     # Read from config
     num_rounds = context.run_config["num-server-rounds"]
     cfg = DictConfig(replace_keys(unflatten_dict(context.run_config)))
+
+    # Create output directory
+    folder_name = cfg.run_name
+    save_path = os.path.join(os.getcwd(), f"results/{folder_name}")
+    os.makedirs(save_path, exist_ok=True)
 
     # Get initial model weights
     init_model = get_model(cfg.model)
