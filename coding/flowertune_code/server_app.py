@@ -10,7 +10,7 @@ import wandb
 
 from .models import get_model, get_parameters, set_parameters
 from .dataset import replace_keys
-from .strategy import FlowerTuneLlm
+from .strategy import FedAvgLlm, FedProxLlm, FedAdamLlm, FlexLoraLlm
 
 
 PROJECT_NAME = "FlowerTune-LLM"
@@ -81,7 +81,18 @@ def server_fn(context: Context):
         wandb.init(project=PROJECT_NAME, name=cfg.run_name)
 
     # Define strategy
-    strategy = FlowerTuneLlm(
+    strategy_map = {
+        "fedavg": FedAvgLlm,
+        "fedprox": FedProxLlm,
+        "fedadam": FedAdamLlm,
+        "flexlora": FlexLoraLlm,
+    }
+    try:
+        flower_tune_llm = strategy_map[cfg.strategy.name]
+    except KeyError:
+        raise ValueError(f"Undefined Strategy: {cfg.strategy.name}")
+
+    strategy = flower_tune_llm(
         use_wandb=cfg.use_wandb,
         run_name=cfg.run_name,
         fraction_fit=cfg.strategy.fraction_fit,
