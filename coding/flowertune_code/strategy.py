@@ -67,7 +67,7 @@ class FedProxLlm(FedProx):
     """
 
     def __init__(self, use_wandb, run_name, **kwargs):
-        super().__init__(**kwargs)
+        super().__init__(proximal_mu=1.0, **kwargs)
         self.comm_tracker = CommunicationTracker(run_name)
         self.use_wandb = use_wandb
 
