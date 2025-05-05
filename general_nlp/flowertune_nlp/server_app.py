@@ -10,7 +10,7 @@ import wandb
 
 from .models import get_model, get_parameters, set_parameters
 from .dataset import replace_keys
-from .strategy import FedAvgLlm, FedProxLlm, FedAdamLlm, FlexLoraLlm
+from .strategy import FedAvgLlm, FedProxLlm, FedAdamLlm, FlexLoraLlm, FedAdagradLlm
 
 
 PROJECT_NAME = "FlowerTune-LLM"
@@ -85,6 +85,7 @@ def server_fn(context: Context):
         "fedavg": FedAvgLlm,
         "fedprox": FedProxLlm,
         "fedadam": FedAdamLlm,
+        "fedadagrad": FedAdagradLlm,
         "flexlora": FlexLoraLlm,
     }
     try:
