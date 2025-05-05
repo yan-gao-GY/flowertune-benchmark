@@ -10,7 +10,7 @@ import wandb
 from flwr.common import FitIns, FitRes, Parameters, log, parameters_to_ndarrays, Scalar, ndarrays_to_parameters
 from flwr.server.client_manager import ClientManager
 from flwr.server.client_proxy import ClientProxy
-from flwr.server.strategy import FedAvg, FedProx, FedAdam, FedAdagrad
+from flwr.server.strategy import FedAvg, FedProx, FedAdam, FedAvgM
 from flwr.server.strategy.aggregate import aggregate
 
 
@@ -149,10 +149,10 @@ class FedAdamLlm(FedAdam):
         return parameters_aggregated, metrics_aggregated
 
 
-class FedAdagradLlm(FedAdagrad):
-    """Customised FedAdam strategy implementation.
+class FedAvgMLlm(FedAvgM):
+    """Customised FedAvgM strategy implementation.
 
-    This class behaves just like FedAdam but also tracks the communication
+    This class behaves just like FedAvgM but also tracks the communication
     costs associated with `fit` over FL rounds.
     """
 
