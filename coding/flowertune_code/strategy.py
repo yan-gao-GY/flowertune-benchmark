@@ -10,7 +10,7 @@ import wandb
 from flwr.common import FitIns, FitRes, Parameters, log, parameters_to_ndarrays, Scalar, ndarrays_to_parameters
 from flwr.server.client_manager import ClientManager
 from flwr.server.client_proxy import ClientProxy
-from flwr.server.strategy import FedAvg, FedProx, FedAdam
+from flwr.server.strategy import FedAvg, FedProx, FedAdam, FedAvgM
 from flwr.server.strategy.aggregate import aggregate
 
 
@@ -108,6 +108,51 @@ class FedAdamLlm(FedAdam):
     """Customised FedAdam strategy implementation.
 
     This class behaves just like FedAdam but also tracks the communication
+    costs associated with `fit` over FL rounds.
+    """
+
+    def __init__(self, use_wandb, run_name, **kwargs):
+        super().__init__(**kwargs)
+        self.comm_tracker = CommunicationTracker(run_name)
+        self.use_wandb = use_wandb
+
+    def configure_fit(
+        self, server_round: int, parameters: Parameters, client_manager: ClientManager
+    ):
+        """Configure the next round of training."""
+        return_clients = super().configure_fit(server_round, parameters, client_manager)
+
+        # Test communication costs
+        fit_ins_list = [fit_ins for _, fit_ins in return_clients]
+        self.comm_tracker.track(fit_ins_list)
+
+        return return_clients
+
+    def aggregate_fit(
+        self,
+        server_round: int,
+        results: List[Tuple[ClientProxy, FitRes]],
+        failures: List[Union[Tuple[ClientProxy, FitRes], BaseException]],
+    ):
+        """Aggregate fit results using weighted average."""
+        # Test communication costs
+        fit_res_list = [fit_res for _, fit_res in results]
+        self.comm_tracker.track(fit_res_list)
+
+        parameters_aggregated, metrics_aggregated = super().aggregate_fit(
+            server_round, results, failures
+        )
+
+        if self.use_wandb:
+            wandb.log(metrics_aggregated, step=server_round)
+
+        return parameters_aggregated, metrics_aggregated
+
+
+class FedAvgMLlm(FedAvgM):
+    """Customised FedAvgM strategy implementation.
+
+    This class behaves just like FedAvgM but also tracks the communication
     costs associated with `fit` over FL rounds.
     """
 
