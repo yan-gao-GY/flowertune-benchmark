@@ -39,6 +39,7 @@ model.gradient-checkpointing = true
 model.lora.peft-lora-r = 32
 model.lora.peft-lora-alpha = 64
 model.lora.peft-use-dora = true
+model.lora.modules = "down_proj,gate_up_proj,o_proj,qkv_proj"
 model.attn = "flash_attention_2"
 train.save-every-round = 5
 train.learning-rate-max = 5e-5
