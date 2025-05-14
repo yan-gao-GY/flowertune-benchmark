@@ -67,6 +67,9 @@ The model checkpoints fine-tuned in paper "FlowerTune: A Cross-Domain Benchmark 
 [Medical](https://huggingface.co/collections/yangao381/flowertune-medical-68248900e2dfe912f34a5b81), 
 [Code](https://huggingface.co/collections/yangao381/flowertune-code-682489a2bdadc846697600dc).
 
+All experiments were conducted on NVIDIA A100 SXM4 (80 GB) GPUs, except for Mistral-24B models which were trained on NVIDIA H100 NVL GPU (94 GB).
+Note that the checkpoints can be used for research purpose only.
+
 
 ## Running the evaluation
 
